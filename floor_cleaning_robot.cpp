@@ -12,15 +12,12 @@ class cell_state{
     '0':free sapce 
     'R' indicates where the robot is placed initially. This is also where the robot can be recharged.  
     'C': space that have been cleaned
+    'L': robot current position
     */
-        cell_state* left;
-        cell_state* right;
-        cell_state* up;
-        cell_state* down;
     public:
         
-        cell_state():c(-1),r(-1),status('0'),left(nullptr),right(nullptr),up(nullptr),down(nullptr){};
-        cell_state(int p1, int p2, char s):r(p1),c(p2),status(s){};
+        cell_state():c(-1),r(-1),status('0'),rank(-1){};
+        cell_state(int p1, int p2, char s):r(p1),c(p2),status(s),rank(-1){};
 
         void showpos(){
             cout<<r<<" "<<c;
@@ -43,11 +40,17 @@ class cell_state{
         void changestate(char news){
             status = news;
         }
+        void setc(int c){
+            this->c = c;
+        }
+        void setr(int r){
+            this->r = r;
+        }
 };
 class Map{
     private:
         int unclean;
-        char* R;
+        cell_state* R;
         int col_num;
         int row_num;
         int max_step;
@@ -55,16 +58,18 @@ class Map{
         int index_C;
     public:
         Map(fstream &fin){
+            char s;
             unclean=0;
             fin>>row_num;
             fin>>col_num;
             fin>>max_step;
-            R = new char [row_num*col_num];
+            R = new cell_state [row_num*col_num];
             for(int i =0;i<row_num;i++){
                 for(int j =0;j<col_num;j++){
-                    fin>>R[i*col_num+j];
-                    if(R[i*col_num+j]=='0')unclean++;
-                    if(R[i*col_num+j]=='R'){
+                    fin>>s;
+                    R[i*col_num+j].changestate(s);
+                    if(s=='0')unclean++;
+                    if(s=='R'){
                         index_R = i;
                         index_C = j;
                     }
@@ -84,7 +89,7 @@ class Map{
         void show_whole_map(){
             for(int i =0;i<row_num;i++){
                 for(int j =0;j<col_num;j++){
-                    cout<<R[i*col_num+j]<<" ";
+                    cout<<R[i*col_num+j].getstatus()<<" ";
                 }
                 cout<<endl;
             }
@@ -95,7 +100,7 @@ class Map{
         void show_maxstep(){
             cout<<"maxstep:"<<max_step<<endl;
         }
-        void where_is_R(){
+        void R_where(){
             cout<<"R("<<index_R<<","<<index_C<<")";
         }
         int R_indr(){
@@ -105,29 +110,20 @@ class Map{
             return index_C;
         }
         char what(int r, int c){
-            return R[r*col_num+c];
-        }
-        cell_state* construct_graph(cell_state* root){
-            if(root->getstatus()=='1'){
-                return new cell_state();
-            }
+            return R[r*col_num+c].getstatus();
         }
 };
 int main(){
     fstream fin;
     fstream fout;
     Map *m;
-    cell_state *R;
     fin.open("map.data",ios::in);
     fout.open("step.output",ios::out);
     m=new Map(fin);
     m->show_whole_map();
     m->show_unclean();
     m->show_maxstep();
-    m->where_is_R();
+    m->R_where();
     cout<<m->what(6,4);
-    R = new cell_state(m->R_indr(), m->R_indc(), 'R');
-    cout<<"test";
     return 0;
-
 }
