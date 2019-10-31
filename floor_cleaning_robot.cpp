@@ -127,7 +127,7 @@ int main(){
     m->where_is_R();
     cout<<m->what(6,4);
     R = new cell_state(m->R_indr(), m->R_indc(), 'R');
-    
+    cout<<"test";
     return 0;
 
 }
