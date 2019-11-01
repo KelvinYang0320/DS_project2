@@ -618,7 +618,7 @@ Pair next_step(int &battery, Map*m){
     //rank down
     //up
     if(ind1-1>=0){
-        if(m->whatstatus(ind1-1,ind2)!='C'
+        if(m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='C'
         &&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
             dir->push(Pair(ind1-1, ind2));
             elem_num++;
@@ -626,7 +626,7 @@ Pair next_step(int &battery, Map*m){
     }
     //down
     if(ind1+1<m->getrow_num()){
-        if(m->whatstatus(ind1+1,ind2)!='C'
+        if(m->whatrank(ind1+1,ind2)<rank_L&&m->whatstatus(ind1+1,ind2)!='C'
         &&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
             dir->push(Pair(ind1+1, ind2));
             elem_num++;
@@ -634,7 +634,7 @@ Pair next_step(int &battery, Map*m){
     }
     //left
     if(ind2-1>=0){
-        if(m->whatstatus(ind1,ind2-1)!='C'
+        if(m->whatrank(ind1,ind2-1)<rank_L&&m->whatstatus(ind1,ind2-1)!='C'
         &&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
             dir->push(Pair(ind1, ind2-1));
             elem_num++;
@@ -642,7 +642,7 @@ Pair next_step(int &battery, Map*m){
     }
     //right
     if(ind2+1<m->getcol_num()){
-        if(m->whatstatus(ind1,ind2+1)!='C'
+        if(m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='C'
         &&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
             dir->push(Pair(ind1, ind2+1));
             elem_num++;
@@ -666,28 +666,28 @@ Pair next_step(int &battery, Map*m){
     //rank down without 'C'
     //up
     if(ind1-1>=0){
-        if(m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+        if(m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
             dir->push(Pair(ind1-1, ind2));
             elem_num++;
         }
     }
     //down
     if(ind1+1<m->getrow_num()){
-        if(m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+        if(m->whatrank(ind1+1,ind2)<rank_L&&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
             dir->push(Pair(ind1+1, ind2));
             elem_num++;
         }
     }
     //left
     if(ind2-1>=0){
-        if(m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+        if(m->whatrank(ind1,ind2-1)<rank_L&&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
             dir->push(Pair(ind1, ind2-1));
             elem_num++;
         }
     }
     //right
     if(ind2+1<m->getcol_num()){
-        if(m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+        if(m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
             dir->push(Pair(ind1, ind2+1));
             elem_num++;
         }
@@ -700,7 +700,7 @@ Pair next_step(int &battery, Map*m){
         else{
             int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
             while(dir->isEmpty()==0){
-                if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
+                if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))<cmp)
                     tmp = dir->front();
                 dir->pop();
             }
@@ -754,31 +754,7 @@ int main(){
     
     cout<<path->isEmpty()<<endl;
     Pair nextp;
-    //while(1){
-         m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-
-         m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-
-         m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-
+    while(1){
         m->setL(ans.q.back());
         cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
         m->show_whole_map();
@@ -786,54 +762,11 @@ int main(){
         m->AfterClean(nextp);
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         ans.push(nextp);
-
-        m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-        
-        
-        m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-
-        m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-
-        m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-        
-        
-        if(m->whatrank(m->getL_r(),m->getL_c())==battery){
-            return 0;
+        if(battery==0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
+            break;
         }
-        m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
-        nextp=next_step(battery,m);
-        m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-    /*    
     }
-    */
+    
     
     cout<<"[output]"<<endl;
     ans.display();
