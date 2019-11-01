@@ -1,6 +1,5 @@
 #include<iostream>
 #include <fstream>
-#include <iomanip>
 using namespace std;
 template<class T>
 class Node 
@@ -14,7 +13,62 @@ class Node
         T data; 
         Node* link; 
 }; 
-
+template<class T>
+class Stack
+{
+    private:
+        Node<T>* t = nullptr;
+    public:
+        void push(T val) {
+            Node<T>* newnode = new Node<T>; 
+            newnode->setdata(val); 
+            newnode->setlink(t); 
+            t = newnode; 
+        }
+        void pop() {
+            if(t==nullptr)
+                cout<<"Stack Underflow"<<endl;
+            else {
+                Node<T> *kill = t;
+                t = t->getlink();
+                delete kill;
+            }
+        }
+        void display() {
+            Node<T>* ptr;
+            if(t==nullptr)
+                cout<<"stack is empty";
+            else {   
+                ptr = t; 
+                cout<<"Stack elements are: ";
+                while (ptr != NULL) { 
+                    cout<< ptr->getdata() <<" "; 
+                    ptr = ptr->getlink(); 
+                } 
+            }
+            cout<<endl;
+        }
+        bool isEmpty(){
+            if(t==nullptr)return true;
+            else return false;
+        }
+        bool find(T d) {
+            Node<T>* ptr;
+            if(t==nullptr)
+                return false;
+            else {   
+                ptr = t; 
+                while (ptr != NULL) { 
+                    if(ptr->getdata()==d)return true; 
+                    ptr = ptr->getlink(); 
+                } 
+            }
+            return false;
+        }
+        T top(){
+            return t->getdata();
+        }
+};
 template<class T>
 class Queue 
 {
@@ -57,32 +111,25 @@ class Queue
             rear = temp; 
             rear->setlink(fro); 
         }
-        int find(T d){ //1 do find 0 not find
+        bool find(T d){ //1 do find 0 not find
             Node<T> *temp = fro;
             if(fro==nullptr){
-                return 0;
+                return false;
             } 
             while (temp->getlink() != fro) 
             { 
                 if(temp->getdata()==d){
-                    return 1;
+                    return true;
                 } 
                 temp = temp->getlink(); 
             } 
             if(temp->getdata()==d){
-                    return 1;
+                    return true;
             }
-            return 0;
+            return false;
         }
-        // Function to delete element from Circular Queue 
-        void pop_t() 
-        {   
-            if (fro == nullptr) 
-            { 
-                throw "[ERROR]pop from empty queue"; 
-            } 
-    
-            // If this is the last node to be deleted 
+        void pop(){
+            if(isEmpty())return;
             T value; // Value to be dequeued 
             if (fro == rear) 
             { 
@@ -99,14 +146,6 @@ class Queue
                 rear->setlink(fro); 
                 delete temp; 
             } 
-        } 
-        void pop(){
-            try{
-                pop_t();
-            }
-            catch(char const*e){
-                cout<<e<<endl;
-            }
         }
         T front(){
             return fro->getdata();
@@ -145,7 +184,17 @@ class Pair{
             if (this->first == comp.first&&this->second == comp.second) return true;
             else return false;
         }
+        ostream& operator<<(ostream& os)
+        {
+            os << first << " " << second << endl;
+            return os;
+        }
 };
+ostream& operator<<(ostream& os, const Pair&n)
+{
+    os << n.first << " " << n.second << endl;
+    return os;
+}
 class cell_state{
     private:
         int c;
@@ -206,6 +255,7 @@ class Map{
         int index_C;
         int L_r;
         int L_c;
+        int far;
     public:
         Map(fstream &fin){
             char s;
@@ -288,23 +338,23 @@ class Map{
         void setrank(int r, int c, int rk){
             R[r*col_num+c].setrank(rk);
         }
-        void construct_order(int r, int c, int n){
-            int next_n=n;
+        void construct_order(){
+            int next_n=0;
             Queue<Pair> *q = new Queue<Pair>;
             Queue<Pair> *q_next = new Queue<Pair>;
-            Queue<Pair> *q_record = new Queue<Pair>;
-            q_next->push(Pair(r,c));
+            Stack<Pair> *q_record = new Stack<Pair>;
+            q_next->push(Pair(L_r,L_c));
             while(1){
                 delete q;
                 q = q_next;
                 q_next = new Queue<Pair>;
-                if(q->isEmpty()==1)return;
-                next_n=next_n+1;
+                if(q->isEmpty()==1)break;
+                
                 while(q->isEmpty()==0){
                     int r_tmp = q->front().first;
                     int c_tmp = q->front().second;
                     
-                    if(whatrank(r_tmp, c_tmp)==-1&&whatstatus(r_tmp,c_tmp)!='1'){
+                    if(whatstatus(r_tmp,c_tmp)!='1'){
                         setrank(r_tmp, c_tmp, next_n);
                     }
                     q_record->push(q->front());
@@ -323,11 +373,15 @@ class Map{
                             q_next->push(Pair(r_tmp, c_tmp-1));
                         }
                     }
+                    //right
                     if((c_tmp+1)<col_num){
                         if(q_record->find(Pair(r_tmp, c_tmp+1))==0&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
                     }   
                 } 
+                next_n=next_n+1;
             }
+            cout<<R[(q_record->top().first)*col_num+q_record->top().second].getrank()<<endl;
+            cout<<q_record->top();
         }
 };
 int main(){
@@ -344,7 +398,7 @@ int main(){
     cout<<endl;
     m->show_each_rank();
     cout<<endl;
-    m->construct_order(m->getL_r(), m->getL_c(), 0);
+    m->construct_order();
     m->show_each_rank();
 
     return 0;
