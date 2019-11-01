@@ -550,6 +550,166 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
     }
     return path;
 }
+void ansout(soln &ans, fstream &fout){
+    fout<<ans.step;
+    fout<<endl;
+    while(ans.q.isEmpty()==0){
+        fout<<ans.q.front();
+        ans.q.pop();
+    }
+}
+Pair next_step(int &battery, Map*m){
+    int ind1=m->getL_r();
+    int ind2=m->getL_c();
+    int rank_L = m->whatrank(ind1,ind2);
+    Queue<Pair> *dir = new Queue<Pair>;
+    int elem_num=0;
+    battery--;
+    if(rank_L+1<=battery){
+        //rank up
+        //up
+        if(ind1-1>=0){
+            if(m->whatrank(ind1-1,ind2)>rank_L&&m->whatstatus(ind1-1,ind2)!='C'
+            &&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+                dir->push(Pair(ind1-1, ind2));
+                elem_num++;
+            }
+        }
+        //down
+        if(ind1+1<m->getrow_num()){
+            if(m->whatrank(ind1+1,ind2)>rank_L&&m->whatstatus(ind1+1,ind2)!='C'
+            &&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+                dir->push(Pair(ind1+1, ind2));
+                elem_num++;
+            }
+        }
+        //left
+        if(ind2-1>=0){
+            if(m->whatrank(ind1,ind2-1)>rank_L&&m->whatstatus(ind1,ind2-1)!='C'
+            &&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+                dir->push(Pair(ind1, ind2-1));
+                elem_num++;
+            }
+        }
+        //right
+        if(ind2+1<m->getcol_num()){
+            if(m->whatrank(ind1,ind2+1)>rank_L&&m->whatstatus(ind1,ind2+1)!='C'
+            &&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+                dir->push(Pair(ind1, ind2+1));
+                elem_num++;
+            }
+        }
+        if(elem_num>=1){
+            Pair tmp=dir->front();
+            if(elem_num==1){
+                delete dir;
+            }
+            else{
+                int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
+                while(dir->isEmpty()==0){
+                    if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
+                        tmp = dir->front();
+                    dir->pop();
+                }
+            }
+            return tmp;
+        }
+    }
+    //rank down
+    //up
+    if(ind1-1>=0){
+        if(m->whatstatus(ind1-1,ind2)!='C'
+        &&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+            dir->push(Pair(ind1-1, ind2));
+            elem_num++;
+        }
+    }
+    //down
+    if(ind1+1<m->getrow_num()){
+        if(m->whatstatus(ind1+1,ind2)!='C'
+        &&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+            dir->push(Pair(ind1+1, ind2));
+            elem_num++;
+        }
+    }
+    //left
+    if(ind2-1>=0){
+        if(m->whatstatus(ind1,ind2-1)!='C'
+        &&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+            dir->push(Pair(ind1, ind2-1));
+            elem_num++;
+        }
+    }
+    //right
+    if(ind2+1<m->getcol_num()){
+        if(m->whatstatus(ind1,ind2+1)!='C'
+        &&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+            dir->push(Pair(ind1, ind2+1));
+            elem_num++;
+        }
+    }
+    if(elem_num>=1){
+        Pair tmp=dir->front();
+        if(elem_num==1){
+            delete dir;
+        }
+        else{
+            int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
+            while(dir->isEmpty()==0){
+                if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
+                    tmp = dir->front();
+                dir->pop();
+            }
+        }
+        return tmp;   
+    }
+    //rank down without 'C'
+    //up
+    if(ind1-1>=0){
+        if(m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+            dir->push(Pair(ind1-1, ind2));
+            elem_num++;
+        }
+    }
+    //down
+    if(ind1+1<m->getrow_num()){
+        if(m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+            dir->push(Pair(ind1+1, ind2));
+            elem_num++;
+        }
+    }
+    //left
+    if(ind2-1>=0){
+        if(m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+            dir->push(Pair(ind1, ind2-1));
+            elem_num++;
+        }
+    }
+    //right
+    if(ind2+1<m->getcol_num()){
+        if(m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+            dir->push(Pair(ind1, ind2+1));
+            elem_num++;
+        }
+    }
+    if(elem_num>=1){
+        Pair tmp=dir->front();
+        if(elem_num==1){
+            delete dir;
+        }
+        else{
+            int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
+            while(dir->isEmpty()==0){
+                if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
+                    tmp = dir->front();
+                dir->pop();
+            }
+        }
+        return tmp;   
+    }
+    cout<<"[error]";
+    return Pair(-1,-1);
+}
 int main(){
     fstream fin;
     fstream fout;
@@ -565,7 +725,7 @@ int main(){
     m->show_maxstep();
     m->R_where();
     m->L_where();
-    cout<<endl;
+    std::cout<<endl;
     s_filthy=m->construct_order();
     m->show_each_rank();
     //init ans
@@ -577,6 +737,7 @@ int main(){
     //battery
     int battery=m->getmax_step();
     //
+   
     cout<<s_filthy->top();
     cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
     battery = battery - m->whatrank_pair(s_filthy->top());
@@ -590,10 +751,96 @@ int main(){
         m->AfterClean(path->top());
         path->pop();
     }
-    cout<<battery;
-    m->setL(ans.q.back());
+    
+    cout<<path->isEmpty()<<endl;
+    Pair nextp;
+    //while(1){
+         m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+         m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+         m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+        
+        
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+        
+        
+        if(m->whatrank(m->getL_r(),m->getL_c())==battery){
+            return 0;
+        }
+        m->setL(ans.q.back());
+        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        m->show_whole_map();
+        nextp=next_step(battery,m);
+        m->AfterClean(nextp);
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        ans.push(nextp);
+    /*    
+    }
+    */
+    
     cout<<"[output]"<<endl;
     ans.display();
     m->show_whole_map();
+    m->show_each_rank();
+    //輸出到檔案
+    ansout(ans, fout);
+    //__________
     return 0;
 }
