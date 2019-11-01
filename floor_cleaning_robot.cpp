@@ -36,16 +36,20 @@ class Stack
         }
         void display() {
             Node<T>* ptr;
+            int cnt = 0;
             if(t==nullptr)
                 cout<<"stack is empty";
             else {   
+                
                 ptr = t; 
-                cout<<"Stack elements are: ";
+                cout<<"Stack elements are: "<<endl;
                 while (ptr != NULL) { 
-                    cout<< ptr->getdata() <<" "; 
+                    cnt ++;
+                    cout<< ptr->getdata(); 
                     ptr = ptr->getlink(); 
                 } 
             }
+            cout<<"element number:"<<cnt;
             cout<<endl;
         }
         bool isEmpty(){
@@ -67,6 +71,29 @@ class Stack
         }
         T top(){
             return t->getdata();
+        }
+        void remove(T d){
+            Node<T>* ptr;
+            Node<T>* pre = nullptr;
+            if(t==nullptr)
+                return;
+            else {   
+                ptr = t; 
+                while (ptr != NULL) { 
+                    if(ptr->getdata()==d){
+                        if(pre==nullptr){
+                            pop();
+                        }else{
+                            pre->setlink(ptr->getlink());
+                            delete ptr;
+                        }
+                        return;
+                    } 
+                    pre = ptr;
+                    ptr = ptr->getlink(); 
+                } 
+            }
+            return;
         }
 };
 template<class T>
@@ -157,17 +184,17 @@ class Queue
             if(fro==nullptr) return 1;
             else return 0;
         }
-        void displayQueue() 
+        void display() 
         { 
             Node<T> *temp = fro;
             if(fro==nullptr){
                 cout<<"[msg]Queue is empty."<<endl;
                 return;
             } 
-            cout<<"Elements in Circular Queue are: "; 
+            cout<<"Elements in Circular Queue are: "<<endl; 
             while (temp->getlink() != fro) 
             { 
-                cout<<temp->getdata()<<" "; 
+                cout<<temp->getdata(); 
                 temp = temp->getlink(); 
             } 
             cout<<temp->getdata()<<endl; 
@@ -317,6 +344,9 @@ class Map{
         void R_where(){
             cout<<"R("<<index_R<<","<<index_C<<")";
         }
+        void L_where(){
+            cout<<"L("<<L_r<<","<<L_c<<")";
+        }
         int R_indr(){
             return index_R;
         }
@@ -332,17 +362,26 @@ class Map{
         char whatstatus(int r, int c){
             return R[r*col_num+c].getstatus();
         }
+        char whatstatus_pair(Pair p){
+            return R[p.first*col_num+p.second].getstatus();
+        }
+        int whatrank_pair(Pair p){
+            return R[p.first*col_num+p.second].getrank();
+        }
         int whatrank(int r, int c){
             return R[r*col_num+c].getrank();
         }
         void setrank(int r, int c, int rk){
             R[r*col_num+c].setrank(rk);
         }
-        void construct_order(){
+        void AfterClean(Pair p){
+            R[p.first*col_num+p.second].changestate('C');
+        }
+        Stack<Pair>* construct_order(){
             int next_n=0;
             Queue<Pair> *q = new Queue<Pair>;
             Queue<Pair> *q_next = new Queue<Pair>;
-            Stack<Pair> *q_record = new Stack<Pair>;
+            Stack<Pair> *s_record = new Stack<Pair>;
             q_next->push(Pair(L_r,L_c));
             while(1){
                 delete q;
@@ -357,36 +396,166 @@ class Map{
                     if(whatstatus(r_tmp,c_tmp)!='1'){
                         setrank(r_tmp, c_tmp, next_n);
                     }
-                    q_record->push(q->front());
+                    if(s_record->find(q->front())==0)s_record->push(q->front());
                     q->pop();
                     //down
                     if((r_tmp+1<row_num)){
-                        if(q_record->find(Pair(r_tmp+1, c_tmp))==0&&whatstatus(r_tmp+1,c_tmp)!='1')q_next->push(Pair(r_tmp+1, c_tmp));
+                        if(s_record->find(Pair(r_tmp+1, c_tmp))==0&&whatstatus(r_tmp+1,c_tmp)!='1')q_next->push(Pair(r_tmp+1, c_tmp));
                     }
                     //up
                     if((r_tmp-1)>=0){
-                        if(q_record->find(Pair(r_tmp-1, c_tmp))==0&&whatstatus(r_tmp-1,c_tmp)!='1')q_next->push(Pair(r_tmp-1, c_tmp));
+                        if(s_record->find(Pair(r_tmp-1, c_tmp))==0&&whatstatus(r_tmp-1,c_tmp)!='1')q_next->push(Pair(r_tmp-1, c_tmp));
                     } 
                     //left
                     if((c_tmp-1)>=0){
-                        if(q_record->find(Pair(r_tmp, c_tmp-1))==0&&whatstatus(r_tmp,c_tmp-1)!='1'){
+                        if(s_record->find(Pair(r_tmp, c_tmp-1))==0&&whatstatus(r_tmp,c_tmp-1)!='1'){
                             q_next->push(Pair(r_tmp, c_tmp-1));
                         }
                     }
                     //right
                     if((c_tmp+1)<col_num){
-                        if(q_record->find(Pair(r_tmp, c_tmp+1))==0&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
+                        if(s_record->find(Pair(r_tmp, c_tmp+1))==0&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
                     }   
                 } 
                 next_n=next_n+1;
             }
-            cout<<R[(q_record->top().first)*col_num+q_record->top().second].getrank()<<endl;
-            cout<<q_record->top();
+            delete q;
+            delete q_next;
+            return s_record;
+        }
+        void setL(Pair p){
+            L_r = p.first;
+            L_c = p.second;
+            R[L_r*col_num+L_c].changestate('L');
         }
 };
+int abs(int a){
+    if(a<0) return -a;
+    else return a;
+}
+int pos_dist(Pair a, Pair b){
+    return (abs(a.first-b.first)+abs(a.second-b.second));
+}
+class soln{
+    public:
+        Queue<Pair> q;
+        int step;
+        void push(Pair p){
+            q.push(p);
+            step=step+1;
+        }
+        void display(){
+            q.display();
+        }
+};
+Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
+    Stack<Pair> *path = new Stack<Pair>;
+    path->push(s_filthy->top());
+    s_filthy->pop();
+    int ind1 = path->top().first;
+    int ind2 = path->top().second;
+    while(ind1!=m->R_indr()&&ind2!=m->R_indc())
+    {
+        Queue<Pair> *dir = new Queue<Pair>;
+        int dir_cnt = 0;
+        //up
+        if(ind1-1>=0){
+            char sta = m->whatstatus(ind1-1,ind2);
+            if(sta!='1' && sta!='C' && m->whatrank(ind1-1,ind2)<m->whatrank(ind1,ind2)){
+                dir->push(Pair(ind1-1,ind2));
+                dir_cnt++;
+            }
+        }
+        //down
+        if(ind1+1<m->getrow_num()){
+            char sta = m->whatstatus(ind1+1,ind2);
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1+1,ind2)<m->whatrank(ind1,ind2)){
+                dir->push(Pair(ind1+1,ind2));
+                dir_cnt++;
+            }
+        }
+        //left
+        if(ind2-1>=0){
+            char sta = m->whatstatus(ind1,ind2-1);
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2-1)<m->whatrank(ind1,ind2)){
+                dir->push(Pair(ind1,ind2-1));
+                dir_cnt++;
+            }
+        }
+        //right
+        if(ind2+1<m->getcol_num()){
+            char sta = m->whatstatus(ind1,ind2+1);
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2+1)<m->whatrank(ind1,ind2)){
+                dir->push(Pair(ind1,ind2+1));
+                dir_cnt++;
+            }
+        }
+        //dir->display();
+        if(dir_cnt==0){
+        //without check 'C'
+            //up
+            if(ind1-1>=0){
+                char sta = m->whatstatus(ind1-1,ind2);
+                if(sta!='1'&& m->whatrank(ind1-1,ind2)<m->whatrank(ind1,ind2)){
+                    dir->push(Pair(ind1-1,ind2));
+                    dir_cnt++;
+                }
+            }
+            //down
+            if(ind1+1<m->getrow_num()){
+                char sta = m->whatstatus(ind1+1,ind2);
+                if(sta!='1'&& m->whatrank(ind1+1,ind2)<m->whatrank(ind1,ind2)){
+                    dir->push(Pair(ind1+1,ind2));
+                    dir_cnt++;
+                }
+            }
+            //left
+            if(ind2-1>=0){
+                char sta = m->whatstatus(ind1,ind2-1);
+                if(sta!='1'&& m->whatrank(ind1,ind2-1)<m->whatrank(ind1,ind2)){
+                    dir->push(Pair(ind1,ind2-1));
+                    dir_cnt++;
+                }
+            }
+            //right
+            if(ind2+1<m->getcol_num()){
+                char sta = m->whatstatus(ind1,ind2+1);
+                if(sta!='1'&& m->whatrank(ind1,ind2+1)<m->whatrank(ind1,ind2)){
+                    dir->push(Pair(ind1,ind2+1));
+                    dir_cnt++;
+                }
+            }
+        }
+        if(dir_cnt>=2){
+            Queue<Pair> *tmp = new Queue<Pair>;
+            int cmp = INT16_MAX;
+            while(dir->isEmpty()!=true){
+                int x = pos_dist(dir->front(), Pair(m->R_indr(), m->R_indc()));
+                if(x<cmp){
+                    cmp =x;
+                    dir_cnt++;
+                    tmp ->push(dir->front());
+                };
+                dir->pop();
+                dir_cnt--;
+            }
+            delete dir;
+            dir = tmp;
+            tmp = nullptr;
+        }
+        path->push(dir->front());
+        delete dir;
+        ind1=path->top().first;
+        ind2=path->top().second;
+    }
+    return path;
+}
 int main(){
     fstream fin;
     fstream fout;
+    Stack<Pair> *s_filthy;
+    
+    
     Map *m;
     fin.open("map.data",ios::in);
     fout.open("step.output",ios::out);
@@ -395,11 +564,36 @@ int main(){
     m->show_unclean();
     m->show_maxstep();
     m->R_where();
+    m->L_where();
     cout<<endl;
+    s_filthy=m->construct_order();
     m->show_each_rank();
-    cout<<endl;
-    m->construct_order();
-    m->show_each_rank();
+    //init ans
+    soln ans;
+    ans.step = 0;
+    ans.push(Pair(m->R_indr(),m->R_indc()));
+    //________
 
+    //battery
+    int battery=m->getmax_step();
+    //
+    cout<<s_filthy->top();
+    cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
+    battery = battery - m->whatrank_pair(s_filthy->top());
+    Stack<Pair> *path = Farthest(s_filthy,m);
+    path->display();
+    //stack to ans
+    s_filthy->display();
+    while(path->isEmpty()==0){
+        ans.push(path->top());
+        s_filthy->remove(path->top());
+        m->AfterClean(path->top());
+        path->pop();
+    }
+    cout<<battery;
+    m->setL(ans.q.back());
+    cout<<"[output]"<<endl;
+    ans.display();
+    m->show_whole_map();
     return 0;
 }
