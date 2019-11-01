@@ -756,12 +756,13 @@ int main(){
     Pair nextp;
     while(1){
         m->setL(ans.q.back());
-        cout<<m->whatrank(m->getL_r(),m->getL_c())<<"__"<<"{"<<battery<<"}"<<endl;
+        cout<<"rank["<<m->whatrank(m->getL_r(),m->getL_c())<<"]-"<<"{"<<battery<<"}"<<endl;
         m->show_whole_map();
         nextp=next_step(battery,m);
         m->AfterClean(nextp);
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         ans.push(nextp);
+        s_filthy->remove(nextp);
         if(battery==0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
             break;
         }
@@ -775,5 +776,6 @@ int main(){
     //輸出到檔案
     ansout(ans, fout);
     //__________
+    s_filthy->display();
     return 0;
 }
