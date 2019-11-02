@@ -707,7 +707,7 @@ Pair next_step(int &battery, Map*m){
         }
         return tmp;   
     }
-    cout<<"[error]";
+    
     return Pair(-1,-1);
 }
 int main(){
@@ -733,32 +733,34 @@ int main(){
     ans.step = 0;
     ans.push(Pair(m->R_indr(),m->R_indc()));
     //________
+    int battery;
+    while(s_filthy->isEmpty()==0)
+    {
 
     //battery
-    int battery=m->getmax_step();
+    battery=m->getmax_step();
     //
-   
-    cout<<s_filthy->top();
-    cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
+    
+    //cout<<s_filthy->top();
+    //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
     battery = battery - m->whatrank_pair(s_filthy->top());
     Stack<Pair> *path = Farthest(s_filthy,m);
-    path->display();
+    
+    //path->display();
     //stack to ans
-    s_filthy->display();
+    //s_filthy->display();
     while(path->isEmpty()==0){
         ans.push(path->top());
         s_filthy->remove(path->top());
         m->AfterClean(path->top());
         path->pop();
     }
-    
-    cout<<path->isEmpty()<<endl;
+    delete path;
     Pair nextp;
     while(1){
         m->setL(ans.q.back());
-        cout<<"rank["<<m->whatrank(m->getL_r(),m->getL_c())<<"]-"<<"{"<<battery<<"}"<<endl;
-        m->show_whole_map();
         nextp=next_step(battery,m);
+        if(nextp==Pair(-1,-1))break;
         m->AfterClean(nextp);
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         ans.push(nextp);
@@ -768,11 +770,12 @@ int main(){
         }
     }
     
+    }
+    
     
     cout<<"[output]"<<endl;
     ans.display();
     m->show_whole_map();
-    m->show_each_rank();
     //輸出到檔案
     ansout(ans, fout);
     //__________
