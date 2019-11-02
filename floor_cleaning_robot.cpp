@@ -400,24 +400,25 @@ class Map{
                     q->pop();
                     //down
                     if((r_tmp+1<row_num)){
-                        if(s_record->find(Pair(r_tmp+1, c_tmp))==0&&whatstatus(r_tmp+1,c_tmp)!='1')q_next->push(Pair(r_tmp+1, c_tmp));
+                        if(whatrank(r_tmp+1, c_tmp)==-1&&whatstatus(r_tmp+1,c_tmp)!='1')q_next->push(Pair(r_tmp+1, c_tmp));
                     }
                     //up
                     if((r_tmp-1)>=0){
-                        if(s_record->find(Pair(r_tmp-1, c_tmp))==0&&whatstatus(r_tmp-1,c_tmp)!='1')q_next->push(Pair(r_tmp-1, c_tmp));
+                        if(whatrank(r_tmp-1, c_tmp)==-1&&whatstatus(r_tmp-1,c_tmp)!='1')q_next->push(Pair(r_tmp-1, c_tmp));
                     } 
                     //left
                     if((c_tmp-1)>=0){
-                        if(s_record->find(Pair(r_tmp, c_tmp-1))==0&&whatstatus(r_tmp,c_tmp-1)!='1'){
+                        if(whatrank(r_tmp, c_tmp-1)==-1&&whatstatus(r_tmp,c_tmp-1)!='1'){
                             q_next->push(Pair(r_tmp, c_tmp-1));
                         }
                     }
                     //right
                     if((c_tmp+1)<col_num){
-                        if(s_record->find(Pair(r_tmp, c_tmp+1))==0&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
+                        if(whatrank(r_tmp, c_tmp+1)==-1&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
                     }   
                 } 
                 next_n=next_n+1;
+                cout<<">>"<<next_n<<endl;
             }
             delete q;
             delete q_next;
@@ -726,6 +727,7 @@ int main(){
     m->R_where();
     m->L_where();
     std::cout<<endl;
+    cout<<"construct_order"<<endl;
     s_filthy=m->construct_order();
     m->show_each_rank();
     //init ans
@@ -736,7 +738,7 @@ int main(){
     int battery;
     while(s_filthy->isEmpty()==0)
     {
-
+    cout<<"recharge battery"<<endl;
     //battery
     battery=m->getmax_step();
     //
@@ -758,27 +760,31 @@ int main(){
     delete path;
     Pair nextp;
     while(1){
+        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         m->setL(ans.q.back());
         nextp=next_step(battery,m);
         if(nextp==Pair(-1,-1))break;
         m->AfterClean(nextp);
-        m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+        //m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         ans.push(nextp);
         s_filthy->remove(nextp);
-        if(battery==0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
+        if(battery<=0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
             break;
         }
     }
     
+    m->show_whole_map();
     }
     
     
     cout<<"[output]"<<endl;
-    ans.display();
+    //ans.display();
     m->show_whole_map();
+    m->show_each_rank();
     //輸出到檔案
     ansout(ans, fout);
     //__________
-    s_filthy->display();
+    //s_filthy->display();
+    m->R_where();
     return 0;
 }
