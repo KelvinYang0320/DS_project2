@@ -398,7 +398,8 @@ class Map{
                     }
                     */
                     setrank(r_tmp, c_tmp, next_n);//change_1111
-                    if(s_record->find(q->front())==0)s_record->push(q->front());//change 1111
+                    //if(s_record->find(q->front())==0)s_record->push(q->front());//change 1111
+                    s_record->push(q->front());
                     q->pop();
                     //down
                     if((r_tmp+1<row_num)){
@@ -722,7 +723,7 @@ int main(){
     
     
     Map *m;
-    fin.open("testcase1.data",ios::in);
+    fin.open("j.data",ios::in);
     fout.open("step.output",ios::out);
     m=new Map(fin);
     //m->show_whole_map();
