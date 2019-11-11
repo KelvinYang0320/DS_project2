@@ -392,29 +392,33 @@ class Map{
                 while(q->isEmpty()==0){
                     int r_tmp = q->front().first;
                     int c_tmp = q->front().second;
-                    
+                    /*change_1111
                     if(whatstatus(r_tmp,c_tmp)!='1'){
                         setrank(r_tmp, c_tmp, next_n);
                     }
-                    if(s_record->find(q->front())==0)s_record->push(q->front());
+                    */
+                    setrank(r_tmp, c_tmp, next_n);//change_1111
+                    if(s_record->find(q->front())==0)s_record->push(q->front());//change 1111
                     q->pop();
                     //down
                     if((r_tmp+1<row_num)){
-                        if(whatrank(r_tmp+1, c_tmp)==-1&&whatstatus(r_tmp+1,c_tmp)!='1')q_next->push(Pair(r_tmp+1, c_tmp));
+                        if(q_next->find(Pair(r_tmp+1, c_tmp))==0 &&whatrank(r_tmp+1, c_tmp)==-1&&whatstatus(r_tmp+1,c_tmp)!='1')
+                            q_next->push(Pair(r_tmp+1, c_tmp));
                     }
                     //up
                     if((r_tmp-1)>=0){
-                        if(whatrank(r_tmp-1, c_tmp)==-1&&whatstatus(r_tmp-1,c_tmp)!='1')q_next->push(Pair(r_tmp-1, c_tmp));
+                        if(q_next->find(Pair(r_tmp-1, c_tmp))==0 &&whatrank(r_tmp-1, c_tmp)==-1&&whatstatus(r_tmp-1,c_tmp)!='1')
+                            q_next->push(Pair(r_tmp-1, c_tmp));
                     } 
                     //left
                     if((c_tmp-1)>=0){
-                        if(whatrank(r_tmp, c_tmp-1)==-1&&whatstatus(r_tmp,c_tmp-1)!='1'){
+                        if(q_next->find(Pair(r_tmp, c_tmp-1))==0 &&whatrank(r_tmp, c_tmp-1)==-1&&whatstatus(r_tmp,c_tmp-1)!='1')
                             q_next->push(Pair(r_tmp, c_tmp-1));
-                        }
                     }
                     //right
                     if((c_tmp+1)<col_num){
-                        if(whatrank(r_tmp, c_tmp+1)==-1&&whatstatus(r_tmp,c_tmp+1)!='1')q_next->push(Pair(r_tmp, c_tmp+1));
+                        if(q_next->find(Pair(r_tmp, c_tmp+1))==0 &&whatrank(r_tmp, c_tmp+1)==-1&&whatstatus(r_tmp,c_tmp+1)!='1')
+                            q_next->push(Pair(r_tmp, c_tmp+1));
                     }   
                 } 
                 next_n=next_n+1;
@@ -718,18 +722,18 @@ int main(){
     
     
     Map *m;
-    fin.open("map.data",ios::in);
+    fin.open("testcase1.data",ios::in);
     fout.open("step.output",ios::out);
     m=new Map(fin);
-    m->show_whole_map();
-    m->show_unclean();
-    m->show_maxstep();
-    m->R_where();
-    m->L_where();
+    //m->show_whole_map();
+    //m->show_unclean();
+    //m->show_maxstep();
+    //m->R_where();
+    //m->L_where();
     std::cout<<endl;
     cout<<"construct_order"<<endl;
     s_filthy=m->construct_order();
-    m->show_each_rank();
+    //m->show_each_rank();
     //init ans
     soln ans;
     ans.step = 0;
@@ -738,7 +742,7 @@ int main(){
     int battery;
     while(s_filthy->isEmpty()==0)
     {
-    cout<<"recharge battery"<<endl;
+    //cout<<"recharge battery"<<endl;
     //battery
     battery=m->getmax_step();
     //
@@ -773,14 +777,14 @@ int main(){
         }
     }
     
-    m->show_whole_map();
+    //m->show_whole_map();
     }
     
     
     cout<<"[output]"<<endl;
     //ans.display();
-    m->show_whole_map();
-    m->show_each_rank();
+    //m->show_whole_map();
+    //m->show_each_rank();
     //輸出到檔案
     ansout(ans, fout);
     //__________
