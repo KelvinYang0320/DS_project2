@@ -451,109 +451,145 @@ class soln{
 };
 Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
     Stack<Pair> *path = new Stack<Pair>;
-
-    path->push(s_filthy->top());
     
+    path->push(s_filthy->top());
     s_filthy->pop();
     int ind1 = path->top().first;
     int ind2 = path->top().second;
     while(ind1!=m->R_indr()&&ind2!=m->R_indc())
     {
-        Queue<Pair> *dir = new Queue<Pair>;
-        int dir_cnt = 0;
+        Pair output_pos = Pair(-1,-1);
+        int output_pos_d =-1;
         int tmp_rank = m->whatrank(ind1,ind2);
+        
         //up
         if(ind1-1>=0){
             char sta = m->whatstatus(ind1-1,ind2);
             if(sta!='1' && sta!='C' && m->whatrank(ind1-1,ind2)<tmp_rank){
-                dir->push(Pair(ind1-1,ind2));
-                dir_cnt++;
+                if(output_pos_d==-1){
+                    output_pos = Pair(ind1-1,ind2);
+                    output_pos_d = pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()));
+                }else{
+                    if(output_pos_d >pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()))){
+                        output_pos = Pair(ind1-1,ind2);
+                        output_pos_d = pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()));
+                    }
+                }
             }
         }
         //down
         if(ind1+1<m->getrow_num()){
             char sta = m->whatstatus(ind1+1,ind2);
             if(sta!='1' && sta!='C'&& m->whatrank(ind1+1,ind2)<tmp_rank){
-                dir->push(Pair(ind1+1,ind2));
-                dir_cnt++;
+                if(output_pos_d==-1){
+                    output_pos = Pair(ind1+1,ind2);
+                    output_pos_d = pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()));
+                }else{
+                    if(output_pos_d >pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()))){
+                        output_pos = Pair(ind1+1,ind2);
+                        output_pos_d = pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()));
+                    }
+                }
             }
         }
         //left
         if(ind2-1>=0){
             char sta = m->whatstatus(ind1,ind2-1);
             if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2-1)<tmp_rank){
-                dir->push(Pair(ind1,ind2-1));
-                dir_cnt++;
+                if(output_pos_d==-1){
+                    output_pos = Pair(ind1,ind2-1);
+                    output_pos_d = pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()));
+                }else{
+                    if(output_pos_d >pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()))){
+                        output_pos = Pair(ind1,ind2-1);
+                        output_pos_d = pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()));
+                    }
+                }
             }
         }
         //right
         if(ind2+1<m->getcol_num()){
             char sta = m->whatstatus(ind1,ind2+1);
             if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2+1)<tmp_rank){
-                dir->push(Pair(ind1,ind2+1));
-                dir_cnt++;
+                if(output_pos_d==-1){
+                    output_pos = Pair(ind1,ind2+1);
+                    output_pos_d = pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()));
+                }else{
+                    if(output_pos_d >pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()))){
+                        output_pos = Pair(ind1,ind2+1);
+                        output_pos_d = pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()));
+                    }
+                }
             }
         }
-        //dir->display();
-        if(dir_cnt==0){
-        //without check 'C'
-            //up
+        
+        if(output_pos_d==-1){
             if(ind1-1>=0){
                 if(m->whatstatus(ind1-1,ind2)!='1'&& m->whatrank(ind1-1,ind2)<tmp_rank){
-                    dir->push(Pair(ind1-1,ind2));
-                    dir_cnt++;
+                    if(output_pos_d==-1){
+                        output_pos = Pair(ind1-1,ind2);
+                        output_pos_d = pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()));
+                    }else{
+                        if(output_pos_d >pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()))){
+                            output_pos = Pair(ind1-1,ind2);
+                            output_pos_d = pos_dist(Pair(ind1-1,ind2), Pair(m->R_indr(), m->R_indc()));
+                        }
+                    }
+                    
                 }
             }
             //down
             if(ind1+1<m->getrow_num()){
                 if(m->whatstatus(ind1+1,ind2)!='1'&& m->whatrank(ind1+1,ind2)<tmp_rank){
-                    dir->push(Pair(ind1+1,ind2));
-                    dir_cnt++;
+                    if(output_pos_d==-1){
+                        output_pos = Pair(ind1+1,ind2);
+                        output_pos_d = pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()));
+                    }else{
+                        if(output_pos_d >pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()))){
+                            output_pos = Pair(ind1+1,ind2);
+                            output_pos_d = pos_dist(Pair(ind1+1,ind2), Pair(m->R_indr(), m->R_indc()));
+                        }
+                    }
+                    
                 }
             }
             //left
             if(ind2-1>=0){
                 if(m->whatstatus(ind1,ind2-1)!='1'&& m->whatrank(ind1,ind2-1)<tmp_rank){
-                    dir->push(Pair(ind1,ind2-1));
-                    dir_cnt++;
+                    
+                    if(output_pos_d==-1){
+                        output_pos = Pair(ind1,ind2-1);
+                        output_pos_d = pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()));
+                    }else{
+                        if(output_pos_d >pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()))){
+                            output_pos = Pair(ind1,ind2-1);
+                            output_pos_d = pos_dist(Pair(ind1,ind2-1), Pair(m->R_indr(), m->R_indc()));
+                        }
+                    }
+                    
                 }
             }
             //right
             if(ind2+1<m->getcol_num()){
                 if(m->whatstatus(ind1,ind2+1)!='1'&& m->whatrank(ind1,ind2+1)<tmp_rank){
-                    dir->push(Pair(ind1,ind2+1));
-                    dir_cnt++;
+                    
+                    if(output_pos_d==-1){
+                        output_pos = Pair(ind1,ind2+1);
+                        output_pos_d = pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()));
+                    }else{
+                        if(output_pos_d >pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()))){
+                            output_pos = Pair(ind1,ind2+1);
+                            output_pos_d = pos_dist(Pair(ind1,ind2+1), Pair(m->R_indr(), m->R_indc()));
+                        }
+                    }
+                    
                 }
-            }
+            }    
         }
-        if(dir_cnt>=2){
-            //Queue<Pair> *tmp = new Queue<Pair>;
-            Pair tmp;
-            int cmp = INT16_MAX;
-            while(dir->isEmpty()!=true){
-                int x = pos_dist(dir->front(), Pair(m->R_indr(), m->R_indc()));
-                if(x<cmp){
-                    cmp =x;
-                    dir_cnt++;
-                    //tmp ->push(dir->front());
-                    tmp = dir->front();
-                };
-                dir->pop();
-                dir_cnt--;
-            }
-            delete dir;
-            path->push(tmp);
-            ind1=path->top().first;
-            ind2=path->top().second;
-            m->AfterClean(tmp);
-        }else{
-            path->push(dir->front());
-            m->AfterClean(dir->front());
-            delete dir;
-            ind1=path->top().first;
-            ind2=path->top().second;
-        }
-        
+        path->push(output_pos);
+        ind1=path->top().first;
+        ind2=path->top().second;
+        m->AfterClean(output_pos);
     }
     return path;
 }
@@ -711,14 +747,15 @@ Pair next_step(int &battery, Map*m){
 }
 int main(){
     double START,END;
-    START = clock();
+    double START_all, END_all;
+    START_all = clock();
     /*---要計算的程式效率區域---*/
     
     fstream fin;
     fstream fout;
     Stack<Pair> *s_filthy;
     Map *m;
-    fin.open("testcase1.data",ios::in);
+    fin.open("j.data",ios::in);
     fout.open("step.output",ios::out);
     m=new Map(fin);
     //m->show_whole_map();
@@ -726,8 +763,9 @@ int main(){
     //m->R_where();
     //m->L_where();
     std::cout<<endl;
-    cout<<"construct_order"<<endl;
+    cout<<"[construct_order]"<<endl;
     s_filthy=m->construct_order();
+    cout<<"[construct_order]done"<<endl;
     //m->show_each_rank();
     //init ans
     soln ans;
@@ -746,46 +784,51 @@ int main(){
         //cout<<s_filthy->top();
         //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
         battery = battery - m->whatrank_pair(s_filthy->top());
-    
+
+        cout<<"[Farthest]";
+        START = clock();//test speed
         Stack<Pair> *path = Farthest(s_filthy,m);
-    
         //path->display();
         //stack to ans
         //s_filthy->display();
         while(path->isEmpty()==0){
             ans.push(path->top());
-            s_filthy->remove(path->top());//change_1111
+            //s_filthy->remove(path->top());//change_1111
             path->pop();
         }
         delete path;
+        END = clock();
+        cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+
+        cout<<"[nextstep]";
+        START = clock();//test speed
         Pair nextp;
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         m->setL(ans.q.back());
-        while(1){
+        do{
             nextp=next_step(battery,m);
             if(nextp==Pair(-1,-1))break;
             m->AfterClean(Pair(m->getL_r(),m->getL_c()));
             m->setL(nextp);
-            //m->AfterClean(nextp);
-            //m->AfterClean(Pair(m->getL_r(),m->getL_c()));
             ans.push(nextp);
-            s_filthy->remove(nextp);//change_1111
-            if(battery<=0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
-                break;
-            }
+            //s_filthy->remove(nextp);//change_1111
+        }while(!((m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())));//del battery==0 change_1112
+    
+        END = clock();
+        cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+        //return 0;//test speed
+        while(s_filthy->isEmpty()==0&&m->whatstatus_pair(s_filthy->top())!='0'){
+            s_filthy->pop();
         }
-    //m->show_whole_map();
+        
+
     }
     cout<<"[output]"<<endl;
-    //ans.display();
-    //m->show_whole_map();
-    //m->show_each_rank();
-    //輸出到檔案
+    START = clock();
     ansout(ans, fout);
-    //__________
-    //s_filthy->display();
-    //m->R_where();
     END = clock();
     cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+    END_all = clock();
+    cout << "total time:"<<(END_all - START_all) / CLOCKS_PER_SEC <<"s"<< endl;
     return 0;
 }
