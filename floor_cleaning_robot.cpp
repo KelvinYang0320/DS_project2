@@ -1,5 +1,6 @@
 #include<iostream>
 #include <fstream>
+#include <time.h>
 using namespace std;
 template<class T>
 class Node 
@@ -273,7 +274,6 @@ class cell_state{
 };
 class Map{
     private:
-        int unclean;
         cell_state* R;
         int col_num;
         int row_num;
@@ -282,11 +282,10 @@ class Map{
         int index_C;
         int L_r;
         int L_c;
-        int far;
+
     public:
         Map(fstream &fin){
             char s;
-            unclean=0;
             fin>>row_num;
             fin>>col_num;
             fin>>max_step;
@@ -295,7 +294,6 @@ class Map{
                 for(int j =0;j<col_num;j++){
                     fin>>s;
                     R[i*col_num+j].changestate(s);
-                    if(s=='0')unclean++;
                     if(s=='R'){
                         index_R = i;
                         L_r = i;
@@ -305,7 +303,6 @@ class Map{
                 }
             }
         }
-        Map():unclean(0),R(nullptr){};
         int getmax_step(){
             return max_step;
         }
@@ -335,9 +332,7 @@ class Map{
                 cout<<endl;
             }
         }
-        void show_unclean(){
-            cout<<"unclean:"<<unclean<<endl;
-        }
+
         void show_maxstep(){
             cout<<"maxstep:"<<max_step<<endl;
         }
@@ -398,7 +393,7 @@ class Map{
                     }
                     */
                     setrank(r_tmp, c_tmp, next_n);//change_1111
-                    //if(s_record->find(q->front())==0)s_record->push(q->front());//change 1111
+                    //if(s_record->find(q->front())==0)s_record->push(q->front());//change_1111
                     s_record->push(q->front());
                     q->pop();
                     //down
@@ -423,7 +418,7 @@ class Map{
                     }   
                 } 
                 next_n=next_n+1;
-                cout<<">>"<<next_n<<endl;
+                //cout<<">>"<<next_n<<endl;//change_1112
             }
             delete q;
             delete q_next;
@@ -456,7 +451,9 @@ class soln{
 };
 Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
     Stack<Pair> *path = new Stack<Pair>;
+
     path->push(s_filthy->top());
+    
     s_filthy->pop();
     int ind1 = path->top().first;
     int ind2 = path->top().second;
@@ -464,10 +461,11 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
     {
         Queue<Pair> *dir = new Queue<Pair>;
         int dir_cnt = 0;
+        int tmp_rank = m->whatrank(ind1,ind2);
         //up
         if(ind1-1>=0){
             char sta = m->whatstatus(ind1-1,ind2);
-            if(sta!='1' && sta!='C' && m->whatrank(ind1-1,ind2)<m->whatrank(ind1,ind2)){
+            if(sta!='1' && sta!='C' && m->whatrank(ind1-1,ind2)<tmp_rank){
                 dir->push(Pair(ind1-1,ind2));
                 dir_cnt++;
             }
@@ -475,7 +473,7 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
         //down
         if(ind1+1<m->getrow_num()){
             char sta = m->whatstatus(ind1+1,ind2);
-            if(sta!='1' && sta!='C'&& m->whatrank(ind1+1,ind2)<m->whatrank(ind1,ind2)){
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1+1,ind2)<tmp_rank){
                 dir->push(Pair(ind1+1,ind2));
                 dir_cnt++;
             }
@@ -483,7 +481,7 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
         //left
         if(ind2-1>=0){
             char sta = m->whatstatus(ind1,ind2-1);
-            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2-1)<m->whatrank(ind1,ind2)){
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2-1)<tmp_rank){
                 dir->push(Pair(ind1,ind2-1));
                 dir_cnt++;
             }
@@ -491,7 +489,7 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
         //right
         if(ind2+1<m->getcol_num()){
             char sta = m->whatstatus(ind1,ind2+1);
-            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2+1)<m->whatrank(ind1,ind2)){
+            if(sta!='1' && sta!='C'&& m->whatrank(ind1,ind2+1)<tmp_rank){
                 dir->push(Pair(ind1,ind2+1));
                 dir_cnt++;
             }
@@ -501,58 +499,61 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
         //without check 'C'
             //up
             if(ind1-1>=0){
-                char sta = m->whatstatus(ind1-1,ind2);
-                if(sta!='1'&& m->whatrank(ind1-1,ind2)<m->whatrank(ind1,ind2)){
+                if(m->whatstatus(ind1-1,ind2)!='1'&& m->whatrank(ind1-1,ind2)<tmp_rank){
                     dir->push(Pair(ind1-1,ind2));
                     dir_cnt++;
                 }
             }
             //down
             if(ind1+1<m->getrow_num()){
-                char sta = m->whatstatus(ind1+1,ind2);
-                if(sta!='1'&& m->whatrank(ind1+1,ind2)<m->whatrank(ind1,ind2)){
+                if(m->whatstatus(ind1+1,ind2)!='1'&& m->whatrank(ind1+1,ind2)<tmp_rank){
                     dir->push(Pair(ind1+1,ind2));
                     dir_cnt++;
                 }
             }
             //left
             if(ind2-1>=0){
-                char sta = m->whatstatus(ind1,ind2-1);
-                if(sta!='1'&& m->whatrank(ind1,ind2-1)<m->whatrank(ind1,ind2)){
+                if(m->whatstatus(ind1,ind2-1)!='1'&& m->whatrank(ind1,ind2-1)<tmp_rank){
                     dir->push(Pair(ind1,ind2-1));
                     dir_cnt++;
                 }
             }
             //right
             if(ind2+1<m->getcol_num()){
-                char sta = m->whatstatus(ind1,ind2+1);
-                if(sta!='1'&& m->whatrank(ind1,ind2+1)<m->whatrank(ind1,ind2)){
+                if(m->whatstatus(ind1,ind2+1)!='1'&& m->whatrank(ind1,ind2+1)<tmp_rank){
                     dir->push(Pair(ind1,ind2+1));
                     dir_cnt++;
                 }
             }
         }
         if(dir_cnt>=2){
-            Queue<Pair> *tmp = new Queue<Pair>;
+            //Queue<Pair> *tmp = new Queue<Pair>;
+            Pair tmp;
             int cmp = INT16_MAX;
             while(dir->isEmpty()!=true){
                 int x = pos_dist(dir->front(), Pair(m->R_indr(), m->R_indc()));
                 if(x<cmp){
                     cmp =x;
                     dir_cnt++;
-                    tmp ->push(dir->front());
+                    //tmp ->push(dir->front());
+                    tmp = dir->front();
                 };
                 dir->pop();
                 dir_cnt--;
             }
             delete dir;
-            dir = tmp;
-            tmp = nullptr;
+            path->push(tmp);
+            ind1=path->top().first;
+            ind2=path->top().second;
+            m->AfterClean(tmp);
+        }else{
+            path->push(dir->front());
+            m->AfterClean(dir->front());
+            delete dir;
+            ind1=path->top().first;
+            ind2=path->top().second;
         }
-        path->push(dir->front());
-        delete dir;
-        ind1=path->top().first;
-        ind2=path->top().second;
+        
     }
     return path;
 }
@@ -571,46 +572,44 @@ Pair next_step(int &battery, Map*m){
     Queue<Pair> *dir = new Queue<Pair>;
     int elem_num=0;
     battery--;
+    bool r=0;
+    bool d=0;
+    bool u=0;
+    bool l=0;
     if(rank_L+1<=battery){
         //rank up
         //up
-        if(ind1-1>=0){
-            if(m->whatrank(ind1-1,ind2)>rank_L&&m->whatstatus(ind1-1,ind2)!='C'
-            &&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+        if(ind1-1>=0&&m->whatstatus(ind1-1,ind2)!='C'){
+            
+            if(m->whatrank(ind1-1,ind2)>rank_L){//del &&m->whatstatus(ind1-1,ind2)!='L'  //del &&m->whatstatus(ind1-1,ind2)!='1' change_1112
                 dir->push(Pair(ind1-1, ind2));
                 elem_num++;
             }
         }
         //down
-        if(ind1+1<m->getrow_num()){
-            if(m->whatrank(ind1+1,ind2)>rank_L&&m->whatstatus(ind1+1,ind2)!='C'
-            &&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+        if(ind1+1<m->getrow_num()&&m->whatstatus(ind1+1,ind2)!='C'){
+            if(m->whatrank(ind1+1,ind2)>rank_L){
                 dir->push(Pair(ind1+1, ind2));
                 elem_num++;
             }
         }
         //left
-        if(ind2-1>=0){
-            if(m->whatrank(ind1,ind2-1)>rank_L&&m->whatstatus(ind1,ind2-1)!='C'
-            &&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+        if(ind2-1>=0&&m->whatstatus(ind1,ind2-1)!='C'){
+            if(m->whatrank(ind1,ind2-1)>rank_L){
                 dir->push(Pair(ind1, ind2-1));
                 elem_num++;
             }
         }
         //right
-        if(ind2+1<m->getcol_num()){
-            if(m->whatrank(ind1,ind2+1)>rank_L&&m->whatstatus(ind1,ind2+1)!='C'
-            &&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+        if(ind2+1<m->getcol_num()&&m->whatstatus(ind1,ind2+1)!='C'){
+            if(m->whatrank(ind1,ind2+1)>rank_L){
                 dir->push(Pair(ind1, ind2+1));
                 elem_num++;
             }
         }
         if(elem_num>=1){
             Pair tmp=dir->front();
-            if(elem_num==1){
-                delete dir;
-            }
-            else{
+            if(elem_num!=1){
                 int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
                 while(dir->isEmpty()==0){
                     if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
@@ -618,48 +617,47 @@ Pair next_step(int &battery, Map*m){
                     dir->pop();
                 }
             }
+            delete dir;
             return tmp;
         }
     }
+    
     //rank down
     //up
-    if(ind1-1>=0){
-        if(m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='C'
-        &&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+    if(ind1-1>=0&&m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='1'){
+        u =1;
+        if(m->whatstatus(ind1-1,ind2)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1-1, ind2));
             elem_num++;
         }
     }
     //down
-    if(ind1+1<m->getrow_num()){
-        if(m->whatrank(ind1+1,ind2)<rank_L&&m->whatstatus(ind1+1,ind2)!='C'
-        &&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+    if(ind1+1<m->getrow_num() && m->whatrank(ind1+1,ind2)<rank_L && m->whatstatus(ind1+1,ind2)!='1'){
+        d=1;
+        if(m->whatstatus(ind1+1,ind2)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1+1, ind2));
             elem_num++;
         }
     }
     //left
-    if(ind2-1>=0){
-        if(m->whatrank(ind1,ind2-1)<rank_L&&m->whatstatus(ind1,ind2-1)!='C'
-        &&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+    if(ind2-1>=0 && m->whatrank(ind1,ind2-1)<rank_L && m->whatstatus(ind1,ind2-1)!='1'){
+        l=1;
+        if(m->whatstatus(ind1,ind2-1)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1, ind2-1));
             elem_num++;
         }
     }
     //right
-    if(ind2+1<m->getcol_num()){
-        if(m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='C'
-        &&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+    if(ind2+1<m->getcol_num() &&m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='1'){
+        r=1;
+        if(m->whatstatus(ind1,ind2+1)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1, ind2+1));
             elem_num++;
         }
     }
     if(elem_num>=1){
         Pair tmp=dir->front();
-        if(elem_num==1){
-            delete dir;
-        }
-        else{
+        if(elem_num!=1){
             int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
             while(dir->isEmpty()==0){
                 if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))>cmp)
@@ -667,43 +665,37 @@ Pair next_step(int &battery, Map*m){
                 dir->pop();
             }
         }
+        delete dir;
         return tmp;   
     }
     //rank down without 'C'
     //up
-    if(ind1-1>=0){
-        if(m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='1'&&m->whatstatus(ind1-1,ind2)!='L'){
+    if(u){//del m->whatrank(ind1-1,ind2)<rank_L&& del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1-1, ind2));
             elem_num++;
-        }
+        
     }
     //down
-    if(ind1+1<m->getrow_num()){
-        if(m->whatrank(ind1+1,ind2)<rank_L&&m->whatstatus(ind1+1,ind2)!='1'&&m->whatstatus(ind1+1,ind2)!='L'){
+    if(d){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1+1, ind2));
             elem_num++;
-        }
+        
     }
     //left
-    if(ind2-1>=0){
-        if(m->whatrank(ind1,ind2-1)<rank_L&&m->whatstatus(ind1,ind2-1)!='1'&&m->whatstatus(ind1,ind2-1)!='L'){
+    if(l){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1, ind2-1));
             elem_num++;
-        }
+        
     }
     //right
-    if(ind2+1<m->getcol_num()){
-        if(m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='1'&&m->whatstatus(ind1,ind2+1)!='L'){
+    if(r){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
             dir->push(Pair(ind1, ind2+1));
             elem_num++;
-        }
+        
     }
     if(elem_num>=1){
         Pair tmp=dir->front();
-        if(elem_num==1){
-            delete dir;
-        }
-        else{
+        if(elem_num!=1){
             int cmp = pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()));
             while(dir->isEmpty()==0){
                 if(pos_dist(dir->front(), Pair(m->R_indr(),m->R_indc()))<cmp)
@@ -711,23 +703,25 @@ Pair next_step(int &battery, Map*m){
                 dir->pop();
             }
         }
+        delete dir;
         return tmp;   
     }
     
     return Pair(-1,-1);
 }
 int main(){
+    double START,END;
+    START = clock();
+    /*---要計算的程式效率區域---*/
+    
     fstream fin;
     fstream fout;
     Stack<Pair> *s_filthy;
-    
-    
     Map *m;
-    fin.open("j.data",ios::in);
+    fin.open("testcase1.data",ios::in);
     fout.open("step.output",ios::out);
     m=new Map(fin);
     //m->show_whole_map();
-    //m->show_unclean();
     //m->show_maxstep();
     //m->R_where();
     //m->L_where();
@@ -743,45 +737,45 @@ int main(){
     int battery;
     while(s_filthy->isEmpty()==0)
     {
-    //cout<<"recharge battery"<<endl;
-    //battery
-    battery=m->getmax_step();
-    //
     
-    //cout<<s_filthy->top();
-    //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
-    battery = battery - m->whatrank_pair(s_filthy->top());
-    Stack<Pair> *path = Farthest(s_filthy,m);
+        //cout<<"recharge battery"<<endl;
+        //battery
+        battery=m->getmax_step();
+        //
     
-    //path->display();
-    //stack to ans
-    //s_filthy->display();
-    while(path->isEmpty()==0){
-        ans.push(path->top());
-        s_filthy->remove(path->top());
-        m->AfterClean(path->top());
-        path->pop();
-    }
-    delete path;
-    Pair nextp;
-    while(1){
+        //cout<<s_filthy->top();
+        //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
+        battery = battery - m->whatrank_pair(s_filthy->top());
+    
+        Stack<Pair> *path = Farthest(s_filthy,m);
+    
+        //path->display();
+        //stack to ans
+        //s_filthy->display();
+        while(path->isEmpty()==0){
+            ans.push(path->top());
+            s_filthy->remove(path->top());//change_1111
+            path->pop();
+        }
+        delete path;
+        Pair nextp;
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         m->setL(ans.q.back());
-        nextp=next_step(battery,m);
-        if(nextp==Pair(-1,-1))break;
-        m->AfterClean(nextp);
-        //m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        ans.push(nextp);
-        s_filthy->remove(nextp);
-        if(battery<=0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
-            break;
+        while(1){
+            nextp=next_step(battery,m);
+            if(nextp==Pair(-1,-1))break;
+            m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+            m->setL(nextp);
+            //m->AfterClean(nextp);
+            //m->AfterClean(Pair(m->getL_r(),m->getL_c()));
+            ans.push(nextp);
+            s_filthy->remove(nextp);//change_1111
+            if(battery<=0||(m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())){
+                break;
+            }
         }
-    }
-    
     //m->show_whole_map();
     }
-    
-    
     cout<<"[output]"<<endl;
     //ans.display();
     //m->show_whole_map();
@@ -790,6 +784,8 @@ int main(){
     ansout(ans, fout);
     //__________
     //s_filthy->display();
-    m->R_where();
+    //m->R_where();
+    END = clock();
+    cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
     return 0;
 }
