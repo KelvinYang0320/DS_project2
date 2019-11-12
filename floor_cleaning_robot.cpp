@@ -760,7 +760,7 @@ int main(){
         delete path;
         Pair nextp;
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
-        m->setL(ans.q.back());
+        m->setL(ans.q.back());//ok
         while(1){
             nextp=next_step(battery,m);
             if(nextp==Pair(-1,-1))break;
