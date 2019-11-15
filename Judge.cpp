@@ -10,8 +10,10 @@ int main(){
     int battery;
     int charge_r;
     int charge_c;
-    fin1.open("map.data",ios::in);
-    fin2.open("step.output",ios::in);
+    //fin1.open("map.data",ios::in);
+    //fin2.open("step.output",ios::in);
+    fin1.open("floor.data",ios::in);
+    fin2.open("path.final",ios::in);
     fin1>>r>>c>>battery;
     char **map= new char* [r];
     for(int i =0;i<r;i++){
@@ -30,12 +32,18 @@ int main(){
     int sec;
     vector<pair<int,int>>v;
     fin2>>N;
-    for(int i=0;i<N;i++){
+    for(int i=0;i<N+1;i++){
         fin2>>fir>>sec;
         v.push_back(pair<int,int>(fir,sec));
     }
-    if(v[0].first!=charge_r|v[0].second!=charge_c){
-        cout<<"初始位置錯誤"<<endl;
+    //recharge pos
+    cout<<"R:("<<v[0].first<<","<<v[0].second<<")"<<endl;
+    if(v[0].first!=charge_r||v[0].second!=charge_c){
+        cout<<"init pos error"<<endl;
+        return 0;
+    }
+    if(v[N].first!=charge_r||v[N].second!=charge_c){
+        cout<<"final pos errot"<<endl;
         return 0;
     }
     //測試電力充足和尚未超出地圖
@@ -77,12 +85,15 @@ int main(){
     for(int i=0;i<N;i++){
         map[v[i].first][v[i].second]='C';
     }
+    /*
+    //print whole map
     for(int i =0;i<r;i++){
         for(int j=0;j<c;j++){
             cout<<map[i][j];
         }
         cout<<endl;
     }
+    */
     cout<<"未清理:"<<endl;
     cnt=0;
     for(int i =0;i<r;i++){
