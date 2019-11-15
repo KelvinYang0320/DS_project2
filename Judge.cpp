@@ -51,7 +51,7 @@ int main(){
     for(int i=0;i<N;i++){
         cnt++;
         if(v[i].first>=r||v[i].first<0||v[i].second>=c||v[i].second<0){
-            cout<<"移動超出地圖"<<v[i].first<<","<<v[i].second<<endl;
+            cout<<"move out of map"<<v[i].first<<","<<v[i].second<<endl;
             return 0 ;
         }
         //cout<<v[i].first<<" "<<v[i].second<<endl;
@@ -59,29 +59,31 @@ int main(){
             cnt = 0;
         }
         if(cnt>=battery){
-            cout<<"沒電了"<<v[i].first<<","<<v[i].second<<endl;
+            cout<<"out of battery"<<v[i].first<<","<<v[i].second<<endl;
             return 0;
         }
     }
+    
     //測試移動距離
     for(int i=0;i<N-1;i++){
-        if(v[i].first!=v[i+1].first){
+        if(v[i].first==v[i+1].first){
             int cmp = v[i].second-v[i+1].second;
             if(cmp>1||cmp<-1){
-                cout<<"有其中兩步驟間移動過遠"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
+                cout<<"there are two steps too far"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
                 return 0;
             }
         }
-        else if(v[i].second!=v[i+1].second){
+        else if(v[i].second==v[i+1].second){
             int cmp = v[i].first-v[i+1].first;
             if(cmp>1||cmp<-1){
-                cout<<"有其中兩步驟間移動過遠"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
+                cout<<"there are two steps too far"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
                 return 0;
             }
         }else if(v[i].first==v[i+1].first&&v[i].second==v[i+1].second){
-            cout<<"有其中兩步驟間沒有移動"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
+            cout<<"there are two steps no move"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
         }
     }
+    
     for(int i=0;i<N;i++){
         map[v[i].first][v[i].second]='C';
     }
@@ -94,7 +96,8 @@ int main(){
         cout<<endl;
     }
     */
-    cout<<"未清理:"<<endl;
+    
+    cout<<"unclean:"<<endl;
     cnt=0;
     for(int i =0;i<r;i++){
         for(int j=0;j<c;j++){
@@ -105,10 +108,11 @@ int main(){
         }
     }
     if(cnt==0){
-        cout<<"無"<<endl;
+        cout<<"none"<<endl;
     }else{
-        cout<<"共計"<<cnt<<"格"<<endl;
+        cout<<"total unclean"<<cnt<<"cells"<<endl;
         return 0;
     }
     cout<<"[PASS]"<<endl;
+
 }
