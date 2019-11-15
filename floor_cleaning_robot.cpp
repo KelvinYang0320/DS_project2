@@ -427,7 +427,7 @@ class Map{
                     }   
                 } 
                 next_n=next_n+1;
-                //cout<<">>"<<next_n<<endl;//change_1112
+                cout<<">>"<<next_n<<endl;//change_1112
             }
             delete q;
             delete q_next;
@@ -465,7 +465,8 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
     s_filthy->pop();
     int ind1 = path->top().first;
     int ind2 = path->top().second;
-    while(ind1!=m->R_indr()&&ind2!=m->R_indc())
+    
+    while(!(ind1==m->R_indr()&&ind2==m->R_indc()))
     {
         Pair output_pos = Pair(-1,-1);
         int output_pos_d =-1;
@@ -781,10 +782,11 @@ int main(){
     //m->show_each_rank();
     //init ans
     soln ans;
-    ans.step = 0;
-    ans.push(Pair(m->R_indr(),m->R_indc()));
+    ans.step = -1;
+    //ans.push(Pair(m->R_indr(),m->R_indc()));
     //________
     int battery;
+    
     while(s_filthy->isEmpty()==0)
     {
     
@@ -811,7 +813,7 @@ int main(){
         delete path;
         //END = clock();
         //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
-
+       
         cout<<"[nextstep]"<<endl;
         //START = clock();//test speed
         Pair nextp;
@@ -835,6 +837,7 @@ int main(){
         
 
     }
+    
     cout<<"[output]"<<endl;
     //START = clock();
     ansout(ans, fout);
