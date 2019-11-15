@@ -303,6 +303,15 @@ class Map{
                 }
             }
         }
+        void map_out(fstream &fout){
+            for(int i =0;i<row_num;i++){
+                for(int j =0;j<col_num;j++){
+                    fout<<R[i*col_num+j].getstatus()<<" ";
+                }
+                fout<<endl;
+            }
+        
+        }
         int getmax_step(){
             return max_step;
         }
@@ -601,6 +610,7 @@ void ansout(soln &ans, fstream &fout){
         ans.q.pop();
     }
 }
+
 Pair next_step(int &battery, Map*m){
     int ind1=m->getL_r();
     int ind2=m->getL_c();
@@ -746,17 +756,19 @@ Pair next_step(int &battery, Map*m){
     return Pair(-1,-1);
 }
 int main(){
-    double START,END;
-    double START_all, END_all;
-    START_all = clock();
+    //double START,END;
+    //double START_all, END_all;
+    //START_all = clock();
     /*---要計算的程式效率區域---*/
     
     fstream fin;
     fstream fout;
+    fstream fout2;
     Stack<Pair> *s_filthy;
     Map *m;
-    fin.open("j.data",ios::in);
-    fout.open("step.output",ios::out);
+    fin.open("floor.data",ios::in);
+    fout.open("path.final",ios::out);
+    //fout2.open("map.output",ios::out);
     m=new Map(fin);
     //m->show_whole_map();
     //m->show_maxstep();
@@ -785,8 +797,8 @@ int main(){
         //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
         battery = battery - m->whatrank_pair(s_filthy->top());
 
-        cout<<"[Farthest]";
-        START = clock();//test speed
+        cout<<"[Farthest]"<<endl;
+        //START = clock();//test speed
         Stack<Pair> *path = Farthest(s_filthy,m);
         //path->display();
         //stack to ans
@@ -797,11 +809,11 @@ int main(){
             path->pop();
         }
         delete path;
-        END = clock();
-        cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+        //END = clock();
+        //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
 
-        cout<<"[nextstep]";
-        START = clock();//test speed
+        cout<<"[nextstep]"<<endl;
+        //START = clock();//test speed
         Pair nextp;
         m->AfterClean(Pair(m->getL_r(),m->getL_c()));
         m->setL(ans.q.back());
@@ -814,8 +826,8 @@ int main(){
             //s_filthy->remove(nextp);//change_1111
         }while(!((m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())));//del battery==0 change_1112
     
-        END = clock();
-        cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+        //END = clock();
+        //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
         //return 0;//test speed
         while(s_filthy->isEmpty()==0&&m->whatstatus_pair(s_filthy->top())!='0'){
             s_filthy->pop();
@@ -824,11 +836,12 @@ int main(){
 
     }
     cout<<"[output]"<<endl;
-    START = clock();
+    //START = clock();
     ansout(ans, fout);
-    END = clock();
-    cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
-    END_all = clock();
-    cout << "total time:"<<(END_all - START_all) / CLOCKS_PER_SEC <<"s"<< endl;
+    m->map_out(fout2);
+    //END = clock();
+    //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
+    //END_all = clock();
+    //cout << "total time:"<<(END_all - START_all) / CLOCKS_PER_SEC <<"s"<< endl;
     return 0;
 }
