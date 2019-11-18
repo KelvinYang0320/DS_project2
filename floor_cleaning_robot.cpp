@@ -427,7 +427,7 @@ class Map{
                     }   
                 } 
                 next_n=next_n+1;
-                cout<<">>"<<next_n<<endl;//change_1112
+                //cout<<">>"<<next_n<<endl;//change_1112
             }
             delete q;
             delete q_next;
@@ -783,7 +783,7 @@ int main(){
     //init ans
     soln ans;
     ans.step = -1;
-    //ans.push(Pair(m->R_indr(),m->R_indc()));
+    ans.push(Pair(m->R_indr(),m->R_indc()));
     //________
     int battery;
     
@@ -805,6 +805,11 @@ int main(){
         //path->display();
         //stack to ans
         //s_filthy->display();
+
+        //start position pop()
+        if(path->top().first==m->R_indr()&& path->top().second==m->R_indc()){
+            path->pop();
+        }
         while(path->isEmpty()==0){
             ans.push(path->top());
             //s_filthy->remove(path->top());//change_1111
@@ -841,7 +846,7 @@ int main(){
     cout<<"[output]"<<endl;
     //START = clock();
     ansout(ans, fout);
-    m->map_out(fout2);
+    //m->map_out(fout2);
     //END = clock();
     //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
     //END_all = clock();
