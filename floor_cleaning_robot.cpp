@@ -214,7 +214,7 @@ class Pair{
         }
         ostream& operator<<(ostream& os)
         {
-            os << first << " " << second << endl;
+            os << first << " " << second <<" "<< endl;
             return os;
         }
 };
@@ -768,7 +768,7 @@ int main(){
     Stack<Pair> *s_filthy;
     Map *m;
     fin.open("floor.data",ios::in);
-    fout.open("path.final",ios::out);
+    fout.open("final.path",ios::out);
     //fout2.open("map.output",ios::out);
     m=new Map(fin);
     //m->show_whole_map();
