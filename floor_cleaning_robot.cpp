@@ -1,3 +1,4 @@
+
 #include<iostream>
 #include <fstream>
 #include <time.h>
@@ -220,7 +221,7 @@ class Pair{
 };
 ostream& operator<<(ostream& os, const Pair&n)
 {
-    os << n.first << " " << n.second << endl;
+    os << n.first << " " << n.second <<" "<< endl;
     return os;
 }
 class cell_state{
@@ -396,13 +397,7 @@ class Map{
                 while(q->isEmpty()==0){
                     int r_tmp = q->front().first;
                     int c_tmp = q->front().second;
-                    /*change_1111
-                    if(whatstatus(r_tmp,c_tmp)!='1'){
-                        setrank(r_tmp, c_tmp, next_n);
-                    }
-                    */
-                    setrank(r_tmp, c_tmp, next_n);//change_1111
-                    //if(s_record->find(q->front())==0)s_record->push(q->front());//change_1111
+                    setrank(r_tmp, c_tmp, next_n);
                     s_record->push(q->front());
                     q->pop();
                     //down
@@ -427,7 +422,7 @@ class Map{
                     }   
                 } 
                 next_n=next_n+1;
-                //cout<<">>"<<next_n<<endl;//change_1112
+                //cout<<">>"<<next_n<<endl;
             }
             delete q;
             delete q_next;
@@ -471,7 +466,7 @@ Stack<Pair> * Farthest(Stack<Pair> *s_filthy, Map *m){
         Pair output_pos = Pair(-1,-1);
         int output_pos_d =-1;
         int tmp_rank = m->whatrank(ind1,ind2);
-        
+        //cout<<ind1<<","<<ind2<<endl;
         //up
         if(ind1-1>=0){
             char sta = m->whatstatus(ind1-1,ind2);
@@ -628,7 +623,7 @@ Pair next_step(int &battery, Map*m){
         //up
         if(ind1-1>=0&&m->whatstatus(ind1-1,ind2)!='C'){
             
-            if(m->whatrank(ind1-1,ind2)>rank_L){//del &&m->whatstatus(ind1-1,ind2)!='L'  //del &&m->whatstatus(ind1-1,ind2)!='1' change_1112
+            if(m->whatrank(ind1-1,ind2)>rank_L){
                 dir->push(Pair(ind1-1, ind2));
                 elem_num++;
             }
@@ -673,7 +668,7 @@ Pair next_step(int &battery, Map*m){
     //up
     if(ind1-1>=0&&m->whatrank(ind1-1,ind2)<rank_L&&m->whatstatus(ind1-1,ind2)!='1'){
         u =1;
-        if(m->whatstatus(ind1-1,ind2)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
+        if(m->whatstatus(ind1-1,ind2)!='C'){
             dir->push(Pair(ind1-1, ind2));
             elem_num++;
         }
@@ -681,7 +676,7 @@ Pair next_step(int &battery, Map*m){
     //down
     if(ind1+1<m->getrow_num() && m->whatrank(ind1+1,ind2)<rank_L && m->whatstatus(ind1+1,ind2)!='1'){
         d=1;
-        if(m->whatstatus(ind1+1,ind2)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
+        if(m->whatstatus(ind1+1,ind2)!='C'){
             dir->push(Pair(ind1+1, ind2));
             elem_num++;
         }
@@ -689,7 +684,7 @@ Pair next_step(int &battery, Map*m){
     //left
     if(ind2-1>=0 && m->whatrank(ind1,ind2-1)<rank_L && m->whatstatus(ind1,ind2-1)!='1'){
         l=1;
-        if(m->whatstatus(ind1,ind2-1)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
+        if(m->whatstatus(ind1,ind2-1)!='C'){
             dir->push(Pair(ind1, ind2-1));
             elem_num++;
         }
@@ -697,7 +692,7 @@ Pair next_step(int &battery, Map*m){
     //right
     if(ind2+1<m->getcol_num() &&m->whatrank(ind1,ind2+1)<rank_L&&m->whatstatus(ind1,ind2+1)!='1'){
         r=1;
-        if(m->whatstatus(ind1,ind2+1)!='C'){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
+        if(m->whatstatus(ind1,ind2+1)!='C'){
             dir->push(Pair(ind1, ind2+1));
             elem_num++;
         }
@@ -717,28 +712,26 @@ Pair next_step(int &battery, Map*m){
     }
     //rank down without 'C'
     //up
-    if(u){//del m->whatrank(ind1-1,ind2)<rank_L&& del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
-            dir->push(Pair(ind1-1, ind2));
-            elem_num++;
+    if(u){
+        dir->push(Pair(ind1-1, ind2));
+        elem_num++;
         
     }
     //down
-    if(d){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
-            dir->push(Pair(ind1+1, ind2));
-            elem_num++;
+    if(d){
+        dir->push(Pair(ind1+1, ind2));
+        elem_num++;
         
     }
     //left
-    if(l){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
-            dir->push(Pair(ind1, ind2-1));
-            elem_num++;
-        
+    if(l){
+        dir->push(Pair(ind1, ind2-1));
+        elem_num++;
     }
     //right
-    if(r){//del &&m->whatstatus(ind1-1,ind2)!='L'   change_1112
-            dir->push(Pair(ind1, ind2+1));
-            elem_num++;
-        
+    if(r){
+        dir->push(Pair(ind1, ind2+1));
+        elem_num++;
     }
     if(elem_num>=1){
         Pair tmp=dir->front();
@@ -761,12 +754,24 @@ int main(){
     //double START_all, END_all;
     //START_all = clock();
     /*---要計算的程式效率區域---*/
-    
+
+    /*for test_all
+    fstream fin_student;
+    fin_student.open("student.testcase",ios::in);
+    for(int iii=0;iii<70;iii++){//testcase_all
+    string id = "106000240";
+    fin_student>>id;
+    */
     fstream fin;
     fstream fout;
     fstream fout2;
     Stack<Pair> *s_filthy;
     Map *m;
+    /*for test_all
+    cout<<id<<endl;
+    fin.open("Project2_Testcase/"+id+"_Testcase/floor.data",ios::in);
+    fout.open("output/"+id+".path",ios::out);
+    */
     fin.open("floor.data",ios::in);
     fout.open("final.path",ios::out);
     //fout2.open("map.output",ios::out);
@@ -789,12 +794,7 @@ int main(){
     
     while(s_filthy->isEmpty()==0)
     {
-    
-        //cout<<"recharge battery"<<endl;
-        //battery
         battery=m->getmax_step();
-        //
-    
         //cout<<s_filthy->top();
         //cout<<"status:"<<m->whatstatus_pair(s_filthy->top())<<endl;
         battery = battery - m->whatrank_pair(s_filthy->top());
@@ -802,11 +802,8 @@ int main(){
         cout<<"[Farthest]"<<endl;
         //START = clock();//test speed
         Stack<Pair> *path = Farthest(s_filthy,m);
-        //path->display();
-        //stack to ans
-        //s_filthy->display();
-
         //start position pop()
+        
         if(path->top().first==m->R_indr()&& path->top().second==m->R_indc()){
             path->pop();
         }
@@ -830,7 +827,6 @@ int main(){
             m->AfterClean(Pair(m->getL_r(),m->getL_c()));
             m->setL(nextp);
             ans.push(nextp);
-            //s_filthy->remove(nextp);//change_1111
         }while(!((m->getL_r()==m->R_indr()&&m->getL_c()==m->R_indc())));//del battery==0 change_1112
     
         //END = clock();
@@ -851,5 +847,9 @@ int main(){
     //cout << (END - START) / CLOCKS_PER_SEC <<"s"<< endl;
     //END_all = clock();
     //cout << "total time:"<<(END_all - START_all) / CLOCKS_PER_SEC <<"s"<< endl;
+    /*for test_a;;
+    delete m;//testcase_all
+    }//testcase_all
+    */
     return 0;
 }
