@@ -13,7 +13,7 @@ int main(){
     //fin1.open("map.data",ios::in);
     //fin2.open("step.output",ios::in);
     fin1.open("floor.data",ios::in);
-    fin2.open("path.final",ios::in);
+    fin2.open("final.path",ios::in);
     fin1>>r>>c>>battery;
     char **map= new char* [r];
     for(int i =0;i<r;i++){
