@@ -5,16 +5,17 @@ using namespace std;
 int main(){
     fstream fin1;
     fstream fin2;
+    fstream fout;
     int r;
     int c;
     int battery;
     int charge_r;
     int charge_c;
-    //fin1.open("map.data",ios::in);
-    //fin2.open("step.output",ios::in);
     fin1.open("floor.data",ios::in);
     fin2.open("final.path",ios::in);
+    fout.open("result.txt",ios::out);
     fin1>>r>>c>>battery;
+    //construct map
     char **map= new char* [r];
     for(int i =0;i<r;i++){
         map[i] = new char [c];
@@ -47,8 +48,8 @@ int main(){
         return 0;
     }
     //測試電力充足和尚未超出地圖
-    int cnt;
-    for(int i=0;i<N;i++){
+    int cnt=0;
+    for(int i=1;i<N+1;i++){
         cnt++;
         if(v[i].first>=r||v[i].first<0||v[i].second>=c||v[i].second<0){
             cout<<"move out of map"<<v[i].first<<","<<v[i].second<<endl;
@@ -64,8 +65,8 @@ int main(){
         }
     }
     
-    //測試移動距離
-    for(int i=0;i<N-1;i++){
+    //測試移動距離與方式
+    for(int i=0;i<N;i++){
         if(v[i].first==v[i+1].first){
             int cmp = v[i].second-v[i+1].second;
             if(cmp>1||cmp<-1){
@@ -82,21 +83,22 @@ int main(){
         }else if(v[i].first==v[i+1].first&&v[i].second==v[i+1].second){
             cout<<"there are two steps no move"<<v[i].first<<","<<v[i].second<<"vs"<<v[i+1].first<<","<<v[i+1].second<<endl;
         }
-    }
-    
-    for(int i=0;i<N;i++){
-        map[v[i].first][v[i].second]='C';
-    }
-    /*
-    //print whole map
-    for(int i =0;i<r;i++){
-        for(int j=0;j<c;j++){
-            cout<<map[i][j];
+        else if(v[i].second==v[i+1].second && v[i].first==v[i+1].first){
+            cout<<"wrong move"<<endl;
+            return 0;
         }
-        cout<<endl;
     }
-    */
     
+    //測試清理完畢
+    for(int i=0;i<N+1;i++){
+        if(map[v[i].first][v[i].second]=='1'){
+            cout<<"through wall"<<endl;
+            return 0;
+        }else{
+            map[v[i].first][v[i].second]='C';
+        }
+        
+    }
     cout<<"unclean:"<<endl;
     cnt=0;
     for(int i =0;i<r;i++){
@@ -114,5 +116,4 @@ int main(){
         return 0;
     }
     cout<<"[PASS]"<<endl;
-
 }
